@@ -4,6 +4,22 @@ import { TNSPlayer } from 'nativescript-audio';
 import { Label } from "ui/label";
 import { getNumber, setNumber, getString, setString, hasKey, remove, clear } from "application-settings";
 import * as app from "tns-core-modules/application"; 
+import { knownFolders, File, Folder } from "file-system";
+import { on as applicationOn, launchEvent, suspendEvent, resumeEvent, exitEvent, lowMemoryEvent, uncaughtErrorEvent, ApplicationEventData, start as applicationStart } from "application";
+
+//check it again
+applicationOn(launchEvent, function (args: ApplicationEventData) {
+  //
+});
+
+//check it again
+applicationOn(suspendEvent, function (args: ApplicationEventData) {
+   
+    if(!this._player.isAudioPlaying)
+    {
+        this._player.pause();
+    }
+});
 
 @Component({
     selector: "Home",
@@ -11,6 +27,8 @@ import * as app from "tns-core-modules/application";
     templateUrl: "./home.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush
 })
+
+
 
 export class HomeComponent implements OnInit {  
 
@@ -22,7 +40,7 @@ export class HomeComponent implements OnInit {
     public showPlaying = true;
     public showLoop = false;
     public totalDuration = "0";
-   // private totalTrackTime = "0";
+    public totalDurationAfterPlay = "";
    
     constructor() {
                 
@@ -48,6 +66,7 @@ export class HomeComponent implements OnInit {
         this._player = new TNSPlayer();
     }
 
+   
     private _trackComplete(args: any) {
         console.log('reference back to player:', args.player);
 
@@ -153,19 +172,13 @@ export class HomeComponent implements OnInit {
         this.showPlaying = false;
         this.duration = "0";
         //console.log("onTapItem:totalduration:" + getString("currentTotalDuration")); 
-        setTimeout( x => { 
-            //this.totalTrackTime = (this.totalTrackTime / (1000*60)%60);
-            console.log("onTapItem:totalTrackTimenNP:" + this.totalDuration); 
-            //this.totalDuration = this.totalDuration;
-            
-            setString("totalDuration", this.totalDuration);
+        setTimeout( x => {                
+            console.log(this.totalDurationAfterPlay);      
+            this.totalDuration = getString("totalDuration");  
+            console.log(getString("totalDuration"));
+            this.duration = getString("totalDuration");  
+        }, 4000);
 
-        }, 2000);
-
-        setTimeout( x => { 
-            this.totalDuration = getString("totalDuration");
-        }, 1000);
-        //(Number(duration) / (1000 * 60) % 60)         
    }
 
    
@@ -186,8 +199,8 @@ export class HomeComponent implements OnInit {
     })
     }).then(() => {
         this._player.getAudioTrackDuration().then((duration) => {  
-        this.totalDuration = this.millisToMinutesAndSeconds(duration);  
-     
+        this.totalDurationAfterPlay = this.millisToMinutesAndSeconds(duration);  
+        setString("totalDuration", this.totalDurationAfterPlay);
     })
    });  
    }
