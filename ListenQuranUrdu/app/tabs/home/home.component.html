@@ -3,9 +3,9 @@
         
        <Label class="h3" [text]="currentSura" row="1" colspan="2"></Label>
         
-        <Label [text]="duration" row="0" col="2"></Label>  
+        <Label text="{{ duration }}" row="0" col="2"></Label>  
         <Label text=" / " row="0" col="3"></Label>    
-        <Label text='{{totalDuration}}' row="0" col="4"></Label>        
+        <Label text="{{ totalDuration }}" row="0" col="4"></Label>        
 
         <!-- <Image src="~/images/stop.png" stretch="none" row="1" col="2"  width="30" height="30" stretch="aspectFill" (tap)="stopPlay()"></Image>                 -->
         <Image src="~/images/next.png" stretch="none" row="1" col="1" width="30" height="30" stretch="aspectFill" (tap)="nextPlay(current)"></Image>

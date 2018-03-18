@@ -25,7 +25,7 @@ applicationOn(suspendEvent, function (args: ApplicationEventData) {
     selector: "Home",
     moduleId: module.id,
     templateUrl: "./home.component.html",
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.Default
 })
 
 
@@ -39,8 +39,8 @@ export class HomeComponent implements OnInit {
     public duration = "0";
     public showPlaying = true;
     public showLoop = false;
-    public totalDuration = "0";
-    public totalDurationAfterPlay = "";
+    public totalDuration: string = "0";
+    public totalMilliSecs = 0;
    
     constructor() {
                 
@@ -170,18 +170,34 @@ export class HomeComponent implements OnInit {
         this.currentSura = n_str + ":" + suraList[args.index];
         this.playAudio(n_str);            
         this.showPlaying = false;
-        this.duration = "0";
-        //console.log("onTapItem:totalduration:" + getString("currentTotalDuration")); 
-        setTimeout( x => {                
-            console.log(this.totalDurationAfterPlay);      
-            this.totalDuration = getString("totalDuration");  
+        //this.duration = "0";
+        setTimeout( x => {                                    
             console.log(getString("totalDuration"));
-            this.duration = getString("totalDuration");  
+            this.totalDuration = getString("totalDuration");           
         }, 4000);
-
+            
+        this.timeout(10);
    }
 
    
+   
+   public timeout(times)
+   {
+    let theLoop: (i: number, delay?) => void = (i: number, delay = 3000) => {
+        if (i % 2 === 0) {
+            delay = 1500;
+        }
+    
+        setTimeout(() => {
+            if (--i) {
+                theLoop(i);
+                console.log(i);
+            }
+        }, delay);
+    };    
+    theLoop(10);
+   }
+
     public playAudio(n_str) 
     {  
        console.log("*****************");
@@ -198,9 +214,8 @@ export class HomeComponent implements OnInit {
         console.log(`Playing:`, playing);           
     })
     }).then(() => {
-        this._player.getAudioTrackDuration().then((duration) => {  
-        this.totalDurationAfterPlay = this.millisToMinutesAndSeconds(duration);  
-        setString("totalDuration", this.totalDurationAfterPlay);
+        this._player.getAudioTrackDuration().then((duration) => {          
+        setString("totalDuration", this.millisToMinutesAndSeconds(duration));
     })
    });  
    }
